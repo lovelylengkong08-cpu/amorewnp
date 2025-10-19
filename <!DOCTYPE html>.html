@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent Apology - Secret Letter</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+    * { box-sizing: border-box; }
+    body, html {
+      margin: 0; padding: 0; height: 100%;
+      background: #fcd9e5;
+      color: white;
+      font-family: 'Patrick Hand', cursive;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    #container {
+      max-width: 600px;
+      min-height: 520px;
+      background: #ff9fcf;
+      border-radius: 16px;
+      box-shadow: 0 0 25px #e45b7a;
+      padding: 25px 30px;
+      position: relative;
+      text-align: center;
+    }
+    #container::before {
+      content: "💖 🎀 💖";
+      position: absolute;
+      top: 8px;
+      right: 15px;
+      font-size: 1.6rem;
+      opacity: 0.7;
+      user-select: none;
+    }
+
+    #letter-container, #quiz-container, #pre-batarang-message, #final-batarang, #final-message, #restart-btn {
+      display: none;
+    }
+
+    input[type="password"] {
+      padding: 10px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      background-color: white;
+      color: #ff4e8b;
+      cursor: pointer;
+    }
+
+    .quiz-option {
+      display: block;
+      margin: 10px auto;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      background: white;
+      color: #ff4e8b;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .quiz-option.correct { background: #70e000; color: white; }
+    .quiz-option.incorrect { background: #ff595e; color: white; }
+
+    #final-batarang {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.6);
+      transition: transform 0.3s ease;
+    }
+
+    #final-message {
+      font-size: 1.5rem;
+      margin-top: 20px;
+      opacity: 0;
+      transition: opacity 1s ease-in;
+    }
+
+    #restart-btn {
+      margin-top: 20px;
+      padding: 10px 18px;
+      font-size: 1rem;
+      background-color: white;
+      color: #ff4e8b;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div id="password-screen">
+      <h2>🎀 Enter the Secret Password 🎀</h2>
+      <input type="password" id="password-input" placeholder="Enter password here" autocomplete="off" />
+      <button id="password-submit">Unlock Letter</button>
+      <div id="password-error" style="color: yellow; margin-top: 10px;"></div>
+    </div>
+
+    <div id="letter-container">
+      <div class="note" id="note" style="white-space: pre-wrap; text-align: left;">
+🎀 Dear Agent Angry Bird,
+
+I, Agent Stud Muffin, am ashamed and guilty for all the crimes I have committed.
+I apologize for all my past behaviours.
+
+I have implemented everything you taught me and upgraded to version 2.0.
+I’m officially resigning from the “Dumb and Immature” club and applying for the “Better Human Being” squad.
+Please accept this goofy apology wrapped in bad jokes and sincere hopes.
+I promise next time to only annoy you with memes and not my bad moods.
+
+Till then, I remain:
+Yours in regret and memes,
+Agent Stud Muffin 💌
+      </div>
+      <button id="read-proceed-btn">Read & Proceed to Quiz</button>
+    </div>
+
+    <div id="quiz-container">
+      <div id="quiz-question"></div>
+      <div id="quiz-options"></div>
+      <div id="quiz-feedback" style="margin-top: 10px;"></div>
+    </div>
+
+    <div id="pre-batarang-message" style="font-size: 1.2rem;"></div>
+    <div id="final-batarang"></div>
+    <div id="final-message">AGENT STUD MUFFIN OUT</div>
+    <button id="restart-btn">Restart</button>
+  </div>
+
+  <script>
+    const correctPassword = "AgentAngryBird";
+
+    const quizData = [
+      {
+        question: "What do you do when stress hits?",
+        options: [
+          "Call that annoying guy who thinks he’s Batman 🦇",
+          "Daru khane 🍻",
+          "sab lai karate chop hanne 🥋",
+          "All of the above 🤹‍♀️"
+        ],
+        correct: [0,3]
+      },
+      {
+        question: "result ma pass hunxau teini daar layo bhane?",
+        options: [
+          "Overthink 🕵‍♀️",
+          "runi basera 😭",
+          "Ask the same dumb ahh Batman to pray for you 🙏",
+          "JOGI banera hidne🧘‍♀️"
+        ],
+        correct: [2]
+      },
+      {
+        question: "nini layena bhane k garne?",
+        options: [
+          "Stay up all night scrolling reels 📱",
+          "Call that dumb batman guy again... 📞",
+          "make tiktok at midnight 🤪",
+          "None of the above 🧙‍♀️"
+        ],
+        correct: [1]
+      },
+      {
+        question: "kei garna janena bhane chai k garne?",
+        options: [
+          "Give up before even trying 🏆",
+          "Start scrolling 🤳",
+          "Ask that dumb ahh Batman for help 🚨",
+          "None of the above 🎭"
+        ],
+        correct: [2]
+      },
+      {
+        question: "When Agent Angry Bird doesn’t feel loved, what’s the best therapy?",
+        options: [
+          "Talk to mummy ji and dd 👩‍👩‍👧‍👦",
+          "Play with LILY (flash)🐾",
+          "Talk with that dumb Batman guy 🦇",
+          "sab lai GHAR JAA bhanne"
+        ],
+        correct: [0,1,2]
+      },
+      {
+        question: "Bhok layo k garney hola",
+        options: [
+          "Chupchap Bhat khane 🍚",
+          "Lukera Burger order garne 🍟",
+          "Blue lays kinne🍦",
+          "Skip everything 🙃"
+        ],
+        correct: [0]
+      }
+    ];
+
+    const pwInput = document.getElementById('password-input');
+    const pwSubmit = document.getElementById('password-submit');
+    const pwError = document.getElementById('password-error');
+    const pwScreen = document.getElementById('password-screen');
+    const letterContainer = document.getElementById('letter-container');
+    const readProceedBtn = document.getElementById('read-proceed-btn');
+    const quizContainer = document.getElementById('quiz-container');
+    const quizQuestion = document.getElementById('quiz-question');
+    const quizOptions = document.getElementById('quiz-options');
+    const quizFeedback = document.getElementById('quiz-feedback');
+    const preBatarangMsg = document.getElementById('pre-batarang-message');
+    const finalBatarang = document.getElementById('final-batarang');
+    const finalMessage = document.getElementById('final-message');
+    const restartBtn = document.getElementById('restart-btn');
+
+    let currentQuizIndex = 0;
+    let quizAnswered = false;
+
+    pwSubmit.onclick = () => {
+      if (pwInput.value.trim() === correctPassword) {
+        pwError.textContent = "";
+        pwScreen.style.display = 'none';
+        letterContainer.style.display = 'block';
+        pwInput.value = "";
+      } else {
+        pwError.textContent = "Incorrect password, try again!";
+      }
+    };
+
+    readProceedBtn.onclick = () => {
+      letterContainer.style.display = 'none';
+      startQuiz();
+    };
+
+    function startQuiz() {
+      currentQuizIndex = 0;
+      quizContainer.style.display = 'block';
+      showQuizQuestion();
+    }
+
+    function showQuizQuestion() {
+      quizFeedback.textContent = "";
+      quizOptions.innerHTML = "";
+      quizAnswered = false;
+
+      const current = quizData[currentQuizIndex];
+      quizQuestion.textContent = current.question;
+
+      current.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option';
+        btn.textContent = opt;
+        btn.onclick = () => {
+          if (quizAnswered) return;
+          if (current.correct.includes(idx)) {
+            btn.classList.add('correct');
+            quizFeedback.textContent = "Correct! 🎉";
+            quizAnswered = true;
+            setTimeout(() => {
+              currentQuizIndex++;
+              if (currentQuizIndex < quizData.length) {
+                showQuizQuestion();
+              } else {
+                endQuiz();
+              }
+            }, 1300);
+          } else {
+            btn.classList.add('incorrect');
+            quizFeedback.textContent = "Oops, wrong! Try next.";
+          }
+        };
+        quizOptions.appendChild(btn);
+      });
+    }
+
+    function endQuiz() {
+      quizContainer.style.display = 'none';
+      showPreBatarangMessage();
+    }
+
+    function showPreBatarangMessage() {
+      const message = "Amisha, I hope I was able to bring a little smile to your pretty little face.💖";
+      let index = 0;
+      preBatarangMsg.style.display = 'block';
+      preBatarangMsg.textContent = "";
+
+      const typingInterval = setInterval(() => {
+        if (index < message.length) {
+          preBatarangMsg.textContent += message.charAt(index);
+          index++;
+        } else {
+          clearInterval(typingInterval);
+          setTimeout(() => {
+            preBatarangMsg.style.display = 'none';
+            launchBatarang();
+          }, 1600);
+        }
+      }, 50);
+    }
+
+    function launchBatarang() {
+      finalBatarang.innerHTML = `
+        <svg viewBox="0 0 512 256" xmlns="http://www.w3.org/2000/svg" width="300">
+          <path d="M256 0C180 0 110 30 50 85c0 30 15 60 50 75-15 15-20 40-10 60 60-20 130-10 166-10s106-10 166 10c10-20 5-45-10-60 35-15 50-45 50-75C402 30 332 0 256 0z" fill="#000"/>
+          <text x="256" y="140" text-anchor="middle" fill="white" font-size="18" font-family="Patrick Hand">AGENT STUD MUFFIN OUT</text>
+        </svg>
+      `;
+      finalBatarang.style.display = 'block';
+      finalBatarang.style.position = 'fixed';
+      finalBatarang.style.top = '50%';
+      finalBatarang.style.left = '-300px';
+
+      let posX = -300;
+      let rotation = 0;
+      const width = window.innerWidth;
+
+      const flyInterval = setInterval(() => {
+        if (posX < width / 2 - 150) {
+          posX += 18;
+          rotation += 30;
+          finalBatarang.style.left = `${posX}px`;
+          finalBatarang.style.transform = `translate(-50%, -50%) scale(1) rotate(${rotation}deg)`;
+        } else {
+          clearInterval(flyInterval);
+          setTimeout(() => {
+            finalMessage.style.opacity = '1';
+            restartBtn.style.display = 'block';
+          }, 700);
+        }
+      }, 30);
+    }
+
+    restartBtn.onclick = () => location.reload();
+  </script>
+</body>
+</html>
